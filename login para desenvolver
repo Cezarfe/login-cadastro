@@ -1,0 +1,47 @@
+<?php
+session_start();
+include("conexao.php");
+
+$erro = [];
+
+if (isset($_POST['email']) && strlen($_POST['email']) > 0) {
+
+    $email = $mysqli->real_escape_string($_POST['email']);
+    $senha = $_POST['senha']; // NÃO criptografa aqui, o password_verify faz isso
+
+    // Busca o usuário pelo email
+    $sql_query = $mysqli->query("SELECT * FROM cadastro WHERE email = '$email'");
+    $dado  = $sql_query->fetch_assoc();
+    $total = $sql_query->num_rows;
+
+    if ($total == 0) {
+        $erro[] = "Este email não pertence a nenhum usuário";
+    } else {
+        // password_verify compara a senha digitada com o hash salvo no banco
+        if (password_verify($senha, $dado['senha'])) {
+            $_SESSION['email'] = $email;
+            header("Location: principal.php");
+            exit();
+        } else {
+            $erro[] = "Senha incorreta";
+        }
+    }
+}
+?>
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+    <?php foreach ($erro as $msg): ?>
+        <p><?php echo $msg; ?></p>
+    <?php endforeach; ?>
+
+    <form method="POST" action="">
+        <p><input value="<?php echo isset($_POST['email']) ? $_POST['email'] : ''; ?>"
+                name="email" placeholder="E-mail" type="text"></p>
+        <p><input name="senha" type="password" placeholder="Senha"></p>
+        <p><input value="Entrar" type="submit"></p>
+    </form>
+</body>
+</html>
