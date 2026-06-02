@@ -1,0 +1,12 @@
+<?php
+$host     = "localhost";
+$usuario  = "root";
+$senha    = "";
+$banco    = "trabalho";
+
+$mysqli = new mysqli($host, $usuario, $senha, $banco);
+
+if ($mysqli->connect_error) {
+    die("Erro na conexão: " . $mysqli->connect_error);
+}
+?>
